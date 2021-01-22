@@ -33,7 +33,7 @@ systemctl start wg-quick@wg0.service
 cd /usr/local/
 curl https://dl.google.com/go/go1.13.4.linux-amd64.tar.gz > go1.13.4.linux-amd64.tar.gz
 tar -xzf go1.13.4.linux-amd64.tar.gz
-cloud-init-per instance profile cat << EOF >> /etc/profile
+cat << EOF >> /etc/profile
 export PATH=$PATH:/usr/local/go/bin
 export GOPATH=$HOME/go
 EOF
