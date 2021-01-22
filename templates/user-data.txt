@@ -20,13 +20,6 @@ if [ "${eip_id}" != "disabled" ]; then
   export REGION=$(curl -fsq http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/[a-z]$//')
   aws --region $${REGION} ec2 associate-address --allocation-id ${eip_id} --instance-id $${INSTANCE_ID}
 fi
-cd /usr/local/
-sudo wget https://dl.google.com/go/go1.13.4.linux-amd64.tar.gz
-sudo tar -xzf go1.13.4.linux-amd64.tar.gz
-export PATH=$PATH:/usr/local/go/bin
-export GOPATH=$HOME/go
-go get github.com/jamescun/wg-api/cmd
-
 chown -R root:root /etc/wireguard/
 chmod -R og-rwx /etc/wireguard/*
 sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/' /etc/sysctl.conf
@@ -36,3 +29,15 @@ ufw allow ${wg_server_port}/udp
 ufw --force enable
 systemctl enable wg-quick@wg0.service
 systemctl start wg-quick@wg0.service
+
+cd /usr/local/
+wget https://dl.google.com/go/go1.13.4.linux-amd64.tar.gz
+tar -xzf go1.13.4.linux-amd64.tar.gz
+cloud-init-per instance profile cat << EOF >> /etc/profile
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=$HOME/go
+EOF
+cd -
+source /etc/profile
+
+go get github.com/jamescun/wg-api/cmd
